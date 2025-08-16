@@ -1,7 +1,23 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import Dao.DaoFactory;
+import View.TelaPrincipal;
+import Dao.GenericDao;
+
+
+
+import java.io.IOException;
+
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
+        public class Main {
+            public static void main(String[] args) throws Exception {
+                new TelaPrincipal(
+                        DaoFactory.getPaciente(),
+                        DaoFactory.getRemedio(),
+                        DaoFactory.getFarmaceutico(),
+                        DaoFactory.getDoenca()
+                );
+            }
         }
+
     }
 }
