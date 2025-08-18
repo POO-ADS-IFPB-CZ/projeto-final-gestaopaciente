@@ -1,5 +1,5 @@
 import Dao.DaoFactory;
-import View.TelaPrincipal;
+import View.TelaFarmaceutico;
 import Dao.GenericDao;
 
 
@@ -8,6 +8,6 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-                TelaPrincipal TelaPrincipal = new TelaPrincipal();
+        TelaFarmaceutico TelaPrincipal = new TelaFarmaceutico();
             }
 }
