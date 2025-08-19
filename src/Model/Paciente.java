@@ -9,11 +9,19 @@ public class Paciente implements Serializable {
     private int idade;
     private int altura;
     private String endereco;
-    private String cpf;;
+    private String cpf;
+    private String farmaceutico;
+    private String doenca;
+    private String remedio;
 
-    public Paciente(String nome, int idade) {
+    public Paciente(String nome, String cpf, int idade, String endereco,int altura, Farmaceutico farmaceutico, DescricaoDoenca doenca, Remedio remedio) {
         this.nome = nome;
         this.idade = idade;
+        this.altura = altura;
+        this.endereco = endereco;
+        this.farmaceutico = farmaceutico;
+        this.doenca = doenca;
+        this.remedio = remedio;
     }
 
     public String getNome() {
@@ -54,6 +62,14 @@ public class Paciente implements Serializable {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public String getFarmaceutico() {
+        return farmaceutico;
+    }
+
+    public void setFarmaceutico(String farmaceutico) {
+        this.farmaceutico = farmaceutico;
     }
 
     @Override

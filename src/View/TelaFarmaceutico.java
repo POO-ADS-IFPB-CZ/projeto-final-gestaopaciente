@@ -17,7 +17,7 @@ public class TelaFarmaceutico extends JFrame {
         private JTextField campoCRF;
         private JButton salvarButton;
         private JButton removerButton;
-        private JButton PacienteButton;
+        private JButton visualizarPacientesButton;
         private JButton listarButton;
         private JButton atualizarButton;
         private JTable tabelaFarmaceuticos;
@@ -47,6 +47,10 @@ public class TelaFarmaceutico extends JFrame {
                         public void actionPerformed(ActionEvent e) {
                                 salvarFarmaceutico();
                         }
+                });
+                visualizarPacientesButton.addActionListener(e -> {
+                        TelaVisualizacaoPaciente telaVisualizacao = new TelaVisualizacaoPaciente();
+                        telaVisualizacao.setVisible(true);
                 });
 
         }
