@@ -17,21 +17,22 @@ public class TelaFarmaceutico extends JFrame {
         private JTextField campoCRF;
         private JButton salvarButton;
         private JButton removerButton;
+        private JButton PacienteButton;
+        private JButton listarButton;
         private JButton atualizarButton;
         private JTable tabelaFarmaceuticos;
         private JScrollPane scrollPane;
 
-        // Camada de serviço (Controller)
         private FarmaceuticoService farmaceuticoService;
 
         public TelaFarmaceutico() {
-                // Inicializa a janela
+
                 setTitle("Gerenciar Farmacêuticos");
                 setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 setSize(800, 600);
                 setLocationRelativeTo(null);
 
-                // Inicializa a camada de serviço e trata o erro de conexão com o arquivo
+
                 try {
                         farmaceuticoService = new FarmaceuticoService();
                 } catch (IOException e) {
@@ -41,7 +42,6 @@ public class TelaFarmaceutico extends JFrame {
                                 JOptionPane.ERROR_MESSAGE);
                 }
 
-                // Adiciona a lógica aos botões
                 salvarButton.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
@@ -49,25 +49,18 @@ public class TelaFarmaceutico extends JFrame {
                         }
                 });
 
-                // TODO: Adicionar lógica para os botões 'removerButton' e 'atualizarButton'
-                // TODO: Adicionar lógica para popular a 'tabelaFarmaceuticos'
         }
 
         private void salvarFarmaceutico() {
                 try {
-                        // Pega os dados dos campos da tela
                         String nome = campoNome.getText();
                         String crf = campoCRF.getText();
 
-                        // Cria um novo objeto Farmaceutico
                         Farmaceutico novoFarmaceutico = new Farmaceutico(nome, crf);
 
-                        // Chama o método salvar do Service
                         if(farmaceuticoService.salvar(novoFarmaceutico)) {
                                 JOptionPane.showMessageDialog(this, "Farmacêutico salvo com sucesso!");
-                                // Opcional: Limpar os campos após salvar e recarregar a tabela
                                 limparCampos();
-                                // recarregarTabela();
                         }
 
                 } catch (IOException | ClassNotFoundException e) {
@@ -76,7 +69,6 @@ public class TelaFarmaceutico extends JFrame {
                                 "Erro de Arquivo",
                                 JOptionPane.ERROR_MESSAGE);
                 } catch (FarmaceuticoExisteException e) {
-                        // Lida com a exceção específica
                         JOptionPane.showMessageDialog(this,
                                 e.getMessage(),
                                 "Erro",
@@ -89,7 +81,6 @@ public class TelaFarmaceutico extends JFrame {
                 campoCRF.setText("");
         }
 
-        // Método main para testar a tela individualmente
         public static void main(String[] args) {
                 SwingUtilities.invokeLater(() -> {
                         TelaFarmaceutico tela = new TelaFarmaceutico();

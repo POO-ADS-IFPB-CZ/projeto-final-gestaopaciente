@@ -2,6 +2,7 @@ package Model;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.lang.*;
 
 public class Paciente implements Serializable {
     private String nome;
