@@ -96,7 +96,6 @@ public class TelaCadastroPaciente extends JFrame {
             Farmaceutico farmaceutico = (Farmaceutico) comboFarmaceutico.getSelectedItem();
             DescricaoDoenca doenca = (DescricaoDoenca) comboDoenca.getSelectedItem();
             Remedio remedio = (Remedio) comboRemedio.getSelectedItem();
-
             Paciente novoPaciente = new Paciente(nome, cpf, idade, endereco, farmaceutico, doenca, remedio);
 
             if (pacienteService.salvar(novoPaciente)) {

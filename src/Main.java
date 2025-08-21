@@ -9,6 +9,6 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
-        TelaCadastroPaciente TelaPrincipal = new TelaCadastroPaciente();
+        TelaFarmaceutico TelaPrincipal = new TelaFarmaceutico();
             }
 }

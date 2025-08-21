@@ -3,6 +3,11 @@ package Model;
 import java.io.Serializable;
 import java.util.Objects;
 import java.lang.*;
+import java.util.Set;
+
+import Service.FarmaceuticoService;
+import Service.DescricaoDoencaService;
+import Service.RemedioService;
 
 public class Paciente implements Serializable {
     private String nome;
@@ -14,7 +19,7 @@ public class Paciente implements Serializable {
     private String doenca;
     private String remedio;
 
-    public Paciente(String nome, String cpf, int idade, String endereco,int altura, Farmaceutico farmaceutico, DescricaoDoenca doenca, Remedio remedio) {
+    public Paciente(String nome, String cpf, int idade, String endereco, int altura, Farmaceutico farmaceutico, DescricaoDoenca doenca, Remedio remedio) {
         this.nome = nome;
         this.idade = idade;
         this.altura = altura;
