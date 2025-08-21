@@ -96,6 +96,13 @@ public class TelaCadastroPaciente extends JFrame {
             Farmaceutico farmaceutico = (Farmaceutico) comboFarmaceutico.getSelectedItem();
             DescricaoDoenca doenca = (DescricaoDoenca) comboDoenca.getSelectedItem();
             Remedio remedio = (Remedio) comboRemedio.getSelectedItem();
+            if (farmaceutico == null || doenca == null || remedio == null) {
+                JOptionPane.showMessageDialog(this,
+                        "Por favor, selecione um farmacêutico, uma doença e um remédio.",
+                        "Erro de Validação",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             Paciente novoPaciente = new Paciente(nome, cpf, idade, endereco, farmaceutico, doenca, remedio);
 
             if (pacienteService.salvar(novoPaciente)) {

@@ -1,6 +1,5 @@
 package View;
 
-
 import Model.DescricaoDoenca;
 import Model.Farmaceutico;
 import Model.Paciente;
@@ -13,8 +12,6 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.io.IOException;
 import java.util.Set;
-import java.util.HashSet;
-import java.util.stream.Collectors;
 
 public class TelaVisualizacaoPaciente extends JFrame {
 
@@ -36,9 +33,6 @@ public class TelaVisualizacaoPaciente extends JFrame {
 
         try {
             pacienteService = new PacienteService();
-            farmaceuticoService = new FarmaceuticoService();
-            doencaService = new DescricaoDoencaService();
-            remedioService = new RemedioService();
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this,
                     "Falha ao conectar com os arquivos de dados.",
@@ -51,6 +45,7 @@ public class TelaVisualizacaoPaciente extends JFrame {
         tabelaDados = new JTable(tableModel);
         scrollPane = new JScrollPane(tabelaDados);
         add(scrollPane);
+
         carregarDadosNaTabela();
     }
 
@@ -59,20 +54,15 @@ public class TelaVisualizacaoPaciente extends JFrame {
 
         try {
             Set<Paciente> pacientes = pacienteService.getAll();
-            Set<Farmaceutico> farmaceuticos = farmaceuticoService.getAll();
-            Set<DescricaoDoenca> doencas = doencaService.getAll();
-            Set<Remedio> remedios = remedioService.getAll();
 
             for (Paciente paciente : pacientes) {
-                for (Farmaceutico farmaceutico : farmaceuticos) { // Lógica simplificada
-                    Object[] rowData = {
-                            farmaceutico.getcrf(),
-                            paciente.getNome(),
-                            Remedio.getdosagem().getNome(),
-                            paciente.getRemedio().getNome()
-                    };
-                    tableModel.addRow(rowData);
-                }
+                Object[] rowData = {
+                        paciente.getFarmaceutico().getNome(),
+                        paciente.getNome(),
+                        paciente.getDoenca().getNome(),
+                        paciente.getRemedio().getNome()
+                };
+                tableModel.addRow(rowData);
             }
         } catch (IOException | ClassNotFoundException e) {
             JOptionPane.showMessageDialog(this,
