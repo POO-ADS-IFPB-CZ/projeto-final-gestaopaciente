@@ -33,7 +33,7 @@
           <text value="Remédio"/>
         </properties>
       </component>
-      <component id="aab46" class="javax.swing.JButton" binding="descriçãoDoençaButton" default-binding="true">
+      <component id="aab46" class="javax.swing.JButton" binding="telaPrincipalButton" default-binding="true">
         <constraints>
           <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>
@@ -41,7 +41,7 @@
           <text value="Descrição Doença"/>
         </properties>
       </component>
-      <component id="b70bb" class="javax.swing.JButton" binding="cadastroPacienteButton" default-binding="true">
+      <component id="b70bb" class="javax.swing.JButton" binding="listarButton" default-binding="true">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
         </constraints>

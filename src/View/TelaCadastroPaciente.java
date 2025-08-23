@@ -28,6 +28,7 @@ public class TelaCadastroPaciente extends JFrame {
     private JButton salvarButton;
     private JButton removerButton;
     private JButton atualizarButton;
+    private JButton TelaPrincipalButton;
     private JTable tabelaPacientes;
     private JScrollPane scrollPane;
     private DefaultTableModel tableModel;

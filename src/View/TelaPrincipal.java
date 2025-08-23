@@ -13,8 +13,8 @@ public class TelaPrincipal extends JFrame {
     private JButton gerenciarDoencasButton;
     private JButton cadastroFarmacêuticoButton;
     private JButton remédioButton;
-    private JButton descriçãoDoençaButton;
-    private JButton cadastroPacienteButton;
+    private JButton telaPrincipalButton;
+    private JButton listarButton;
 
     public TelaPrincipal() {
         setTitle("Menu Principal");

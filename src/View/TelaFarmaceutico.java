@@ -17,9 +17,9 @@ public class TelaFarmaceutico extends JFrame {
         private JTextField campoCRF;
         private JButton salvarButton;
         private JButton removerButton;
-        private JButton visualizarPacientesButton;
         private JButton listarButton;
         private JButton atualizarButton;
+        private JButton TelaPrincipalButton;
         private JTable tabelaFarmaceuticos;
         private JScrollPane scrollPane;
 
@@ -32,6 +32,16 @@ public class TelaFarmaceutico extends JFrame {
                 setSize(800, 600);
                 setLocationRelativeTo(null);
 
+                TelaPrincipalButton = new JButton("Voltar para Tela Principal");
+                TelaPrincipalButton.addActionListener(e -> {
+                        this.dispose();
+
+
+                        TelaPrincipal telaPrincipal = new TelaPrincipal();
+                        telaPrincipal.setVisible(true);
+                });
+
+                contentPane.add(TelaPrincipalButton);
 
                 try {
                         farmaceuticoService = new FarmaceuticoService();
@@ -48,10 +58,7 @@ public class TelaFarmaceutico extends JFrame {
                                 salvarFarmaceutico();
                         }
                 });
-                visualizarPacientesButton.addActionListener(e -> {
-                        TelaVisualizacaoPaciente telaVisualizacao = new TelaVisualizacaoPaciente();
-                        telaVisualizacao.setVisible(true);
-                });
+
 
         }
 
