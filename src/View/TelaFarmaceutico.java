@@ -85,10 +85,4 @@ public class TelaFarmaceutico extends JFrame {
                 campoCRF.setText("");
         }
 
-        public static void main(String[] args) {
-                SwingUtilities.invokeLater(() -> {
-                        TelaFarmaceutico tela = new TelaFarmaceutico();
-                        tela.setVisible(true);
-                });
-        }
 }
