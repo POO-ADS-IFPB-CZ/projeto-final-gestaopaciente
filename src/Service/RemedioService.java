@@ -3,6 +3,8 @@ package Service;
 
 import Dao.GenericDao;
 import Model.Remedio;
+import exceptions.RemedioExisteException;
+
 import java.io.IOException;
 import java.util.Set;
 
@@ -15,7 +17,13 @@ public class RemedioService {
     }
 
     public boolean salvar(Remedio remedio) throws IOException,
-            ClassNotFoundException {
+            ClassNotFoundException, RemedioExisteException {
+        Set<Remedio> remedios = remedioDao.getAll();
+        if (remedios.contains(remedio)) {
+            throw new RemedioExisteException(
+                    "Já existe um remédio com o nome '" + remedio.getNome() +
+                            "' e dosagem '" + remedio.getDosagem() + "'.");
+        }
         return remedioDao.salvar(remedio);
     }
 

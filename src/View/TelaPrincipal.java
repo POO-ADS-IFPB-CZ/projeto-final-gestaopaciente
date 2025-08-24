@@ -59,10 +59,6 @@ public class TelaPrincipal extends JFrame {
             telaGerenciarRemedio.setVisible(true);
         });
 
-        gerenciarDoencasButton.addActionListener(e -> {
-            TelaGerenciarDescricaoDoenca telaGerenciarDoenca = new TelaGerenciarDescricaoDoenca();
-            telaGerenciarDoenca.setVisible(true);
-        });
     }
 
     public static void main(String[] args) {

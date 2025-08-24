@@ -11,7 +11,7 @@ import Service.RemedioService;
 import exceptions.PacienteExisteException;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.io.IOException;
 import java.util.Set;
 
@@ -22,16 +22,14 @@ public class TelaCadastroPaciente extends JFrame {
     private JTextField campoCpf;
     private JTextField campoIdade;
     private JTextField campoEndereco;
+    private JTextField campoAltura; // Adicione este campo, se a altura for obrigatória
     private JComboBox<Farmaceutico> comboFarmaceutico;
     private JComboBox<DescricaoDoenca> comboDoenca;
     private JComboBox<Remedio> comboRemedio;
     private JButton salvarButton;
     private JButton removerButton;
     private JButton atualizarButton;
-    private JButton TelaPrincipalButton;
-    private JTable tabelaPacientes;
-    private JScrollPane scrollPane;
-    private DefaultTableModel tableModel;
+    private JButton voltarButton;
 
     private PacienteService pacienteService;
     private FarmaceuticoService farmaceuticoService;
@@ -41,86 +39,83 @@ public class TelaCadastroPaciente extends JFrame {
     public TelaCadastroPaciente() {
         setTitle("Gerenciar Pacientes");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(1000, 600);
+        setSize(600, 480);
         setLocationRelativeTo(null);
+
+        contentPane = new JPanel(new GridLayout(10, 2, 10, 10));
+        contentPane.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         setContentPane(contentPane);
+
+        campoNome = new JTextField();
+        campoCpf = new JTextField();
+        campoIdade = new JTextField();
+        campoEndereco = new JTextField();
+        campoAltura = new JTextField(); // Novo campo de Altura
+        comboFarmaceutico = new JComboBox<>();
+        comboDoenca = new JComboBox<>();
+        comboRemedio = new JComboBox<>();
+
+        salvarButton = new JButton("Salvar");
+        removerButton = new JButton("Remover (Usar CPF)");
+        atualizarButton = new JButton("Atualizar (Usar CPF)");
+        voltarButton = new JButton("Voltar");
+
+        contentPane.add(new JLabel("Nome:"));
+        contentPane.add(campoNome);
+        contentPane.add(new JLabel("CPF:"));
+        contentPane.add(campoCpf);
+        contentPane.add(new JLabel("Idade:"));
+        contentPane.add(campoIdade);
+        contentPane.add(new JLabel("Endereço:"));
+        contentPane.add(campoEndereco);
+        contentPane.add(new JLabel("Altura (cm):")); // Novo campo
+        contentPane.add(campoAltura);               // Novo campo
+        contentPane.add(new JLabel("Farmacêutico:"));
+        contentPane.add(comboFarmaceutico);
+        contentPane.add(new JLabel("Doença:"));
+        contentPane.add(comboDoenca);
+        contentPane.add(new JLabel("Remédio:"));
+        contentPane.add(comboRemedio);
+
+        contentPane.add(salvarButton);
+        contentPane.add(removerButton);
+        contentPane.add(atualizarButton);
+        contentPane.add(voltarButton);
 
         try {
             pacienteService = new PacienteService();
             farmaceuticoService = new FarmaceuticoService();
             doencaService = new DescricaoDoencaService();
             remedioService = new RemedioService();
+            carregarCombos();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this,
-                    "Falha ao conectar com os arquivos de dados.",
-                    "Erro de Conexão",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Falha ao conectar com os arquivos de dados.", "Erro de Conexão", JOptionPane.ERROR_MESSAGE);
         }
-
-        // Configuração da JTable
-        String[] colunas = {"Nome", "CPF", "Idade", "Endereço", "Farmacêutico", "Doença", "Remédio"};
-        tableModel = new DefaultTableModel(colunas, 0);
-        tabelaPacientes.setModel(tableModel);
-
-        carregarDadosNaTabela();
-        popularCombos();
 
         salvarButton.addActionListener(e -> salvarPaciente());
         removerButton.addActionListener(e -> removerPaciente());
         atualizarButton.addActionListener(e -> atualizarPaciente());
-
-        tabelaPacientes.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting() && tabelaPacientes.getSelectedRow() != -1) {
-                preencherCamposComDadosDaTabela();
-            }
+        voltarButton.addActionListener(e -> {
+            this.dispose();
         });
     }
 
-    private void carregarDadosNaTabela() {
-        tableModel.setRowCount(0);
+    private void carregarCombos() {
         try {
-            Set<Paciente> pacientes = pacienteService.getAll();
-            for (Paciente p : pacientes) {
-                Object[] rowData = {
-                        p.getNome(),
-                        p.getCpf(),
-                        p.getIdade(),
-                        p.getEndereco(),
-                        p.getFarmaceutico().getNome(), // Chama o método getNome() do objeto Farmaceutico
-                        p.getDoenca().getNome(),
-                        p.getRemedio().getNome()
-                };
-                tableModel.addRow(rowData);
-            }
-        } catch (IOException | ClassNotFoundException e) {
-            JOptionPane.showMessageDialog(this,
-                    "Falha ao carregar os dados. Verifique os arquivos.",
-                    "Erro de Carregamento",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
-    private void popularCombos() {
-        try {
+            Set<Farmaceutico> farmaceuticos = farmaceuticoService.getAll();
             comboFarmaceutico.removeAllItems();
-            for (Farmaceutico f : farmaceuticoService.getAll()) {
-                comboFarmaceutico.addItem(f);
-            }
+            for (Farmaceutico f : farmaceuticos) { comboFarmaceutico.addItem(f); }
 
+            Set<DescricaoDoenca> doencas = doencaService.getAll();
             comboDoenca.removeAllItems();
-            for (DescricaoDoenca d : doencaService.getAll()) {
-                comboDoenca.addItem(d);
-            }
+            for (DescricaoDoenca d : doencas) { comboDoenca.addItem(d); }
 
+            Set<Remedio> remedios = remedioService.getAll();
             comboRemedio.removeAllItems();
-            for (Remedio r : remedioService.getAll()) {
-                comboRemedio.addItem(r);
-            }
+            for (Remedio r : remedios) { comboRemedio.addItem(r); }
+
         } catch (IOException | ClassNotFoundException e) {
-            JOptionPane.showMessageDialog(this,
-                    "Falha ao popular os combos.",
-                    "Erro",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Falha ao carregar dados de Farmacêuticos, Doenças ou Remédios.", "Erro de Carregamento", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -128,59 +123,61 @@ public class TelaCadastroPaciente extends JFrame {
         try {
             String nome = campoNome.getText();
             String cpf = campoCpf.getText();
-            int idade = Integer.parseInt(campoIdade.getText());
             String endereco = campoEndereco.getText();
+            Farmaceutico farmaceuticoSelecionado = (Farmaceutico) comboFarmaceutico.getSelectedItem();
+            DescricaoDoenca doencaSelecionada = (DescricaoDoenca) comboDoenca.getSelectedItem();
+            Remedio remedioSelecionado = (Remedio) comboRemedio.getSelectedItem();
 
-            // Acesso aos objetos selecionados nos JComboBox
-            Farmaceutico farmaceutico = (Farmaceutico) comboFarmaceutico.getSelectedItem();
-            DescricaoDoenca doenca = (DescricaoDoenca) comboDoenca.getSelectedItem();
-            Remedio remedio = (Remedio) comboRemedio.getSelectedItem();
-
-            if (farmaceutico == null || doenca == null || remedio == null) {
-                JOptionPane.showMessageDialog(this,
-                        "Por favor, selecione um farmacêutico, uma doença e um remédio.",
-                        "Erro de Validação",
-                        JOptionPane.ERROR_MESSAGE);
+            if (farmaceuticoSelecionado == null || doencaSelecionada == null || remedioSelecionado == null) {
+                JOptionPane.showMessageDialog(this, "Selecione um Farmacêutico, Doença e Remédio.", "Aviso", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            int idade, altura;
+            try {
+                idade = Integer.parseInt(campoIdade.getText());
+                altura = Integer.parseInt(campoAltura.getText());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "A idade e a altura devem ser números válidos.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
-            Paciente novoPaciente = new Paciente(nome, cpf, idade, endereco, farmaceutico, doenca, remedio);
+            Paciente novoPaciente = new Paciente(
+                    nome,
+                    cpf,
+                    idade,
+                    endereco,
+                    altura,
+                    farmaceuticoSelecionado,
+                    doencaSelecionada,
+                    remedioSelecionado
+            );
 
             if (pacienteService.salvar(novoPaciente)) {
                 JOptionPane.showMessageDialog(this, "Paciente salvo com sucesso!");
                 limparCampos();
-                carregarDadosNaTabela();
             }
 
         } catch (IOException | ClassNotFoundException e) {
-            JOptionPane.showMessageDialog(this,
-                    "Falha ao manipular o arquivo de dados.",
-                    "Erro de Arquivo",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Falha ao manipular o arquivo de dados: " + e.getMessage(), "Erro de Arquivo", JOptionPane.ERROR_MESSAGE);
         } catch (PacienteExisteException e) {
-            JOptionPane.showMessageDialog(this,
-                    e.getMessage(),
-                    "Erro",
-                    JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Erro de Cadastro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void removerPaciente() {
-        int linhaSelecionada = tabelaPacientes.getSelectedRow();
-        if (linhaSelecionada == -1) {
-            JOptionPane.showMessageDialog(this, "Selecione um paciente para remover.", "Erro", JOptionPane.ERROR_MESSAGE);
+        String cpf = campoCpf.getText();
+        if (cpf.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Digite o CPF do paciente para remover.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
-        String cpfParaRemover = (String) tableModel.getValueAt(linhaSelecionada, 1);
         try {
-            // Cria um objeto Paciente apenas com o CPF para a busca e remoção
-            Paciente pacienteParaRemover = new Paciente(null, cpfParaRemover, 0, null, null, null, null);
+            Paciente pacienteParaRemover = new Paciente(cpf);
+
             if (pacienteService.remover(pacienteParaRemover)) {
                 JOptionPane.showMessageDialog(this, "Paciente removido com sucesso!");
-                carregarDadosNaTabela();
+                limparCampos();
             } else {
-                JOptionPane.showMessageDialog(this, "Falha ao remover o paciente.", "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Paciente com CPF " + cpf + " não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
         } catch (IOException | ClassNotFoundException e) {
             JOptionPane.showMessageDialog(this, "Falha ao manipular o arquivo de dados.", "Erro de Arquivo", JOptionPane.ERROR_MESSAGE);
@@ -188,68 +185,67 @@ public class TelaCadastroPaciente extends JFrame {
     }
 
     private void atualizarPaciente() {
-        int linhaSelecionada = tabelaPacientes.getSelectedRow();
-        if (linhaSelecionada == -1) {
-            JOptionPane.showMessageDialog(this, "Selecione um paciente para atualizar.", "Erro", JOptionPane.ERROR_MESSAGE);
+        String cpfAntigo = campoCpf.getText();
+
+        if (cpfAntigo.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Digite o CPF do paciente para atualizar.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         try {
-            String nomeAntigo = (String) tableModel.getValueAt(linhaSelecionada, 0);
-            String cpfAntigo = (String) tableModel.getValueAt(linhaSelecionada, 1);
-            // Remova o paciente antigo primeiro
-            Paciente pacienteAntigo = new Paciente(nomeAntigo, cpfAntigo, 0, null, null, null, null);
-            pacienteService.remover(pacienteAntigo);
-
-            // Crie e salve o paciente atualizado com os dados do formulário
             String novoNome = campoNome.getText();
-            String novoCpf = campoCpf.getText();
-            int novaIdade = Integer.parseInt(campoIdade.getText());
             String novoEndereco = campoEndereco.getText();
-
-            Farmaceutico farmaceutico = (Farmaceutico) comboFarmaceutico.getSelectedItem();
-            DescricaoDoenca doenca = (DescricaoDoenca) comboDoenca.getSelectedItem();
-            Remedio remedio = (Remedio) comboRemedio.getSelectedItem();
-
-            if (farmaceutico == null || doenca == null || remedio == null) {
-                JOptionPane.showMessageDialog(this, "Por favor, selecione um farmacêutico, uma doença e um remédio para a atualização.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
+            int novaIdade, novaAltura;
+            try {
+                novaIdade = Integer.parseInt(campoIdade.getText());
+                novaAltura = Integer.parseInt(campoAltura.getText());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "A idade e a altura devem ser números válidos (Novos Dados).", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            Farmaceutico novoFarmaceutico = (Farmaceutico) comboFarmaceutico.getSelectedItem();
+            DescricaoDoenca novaDoenca = (DescricaoDoenca) comboDoenca.getSelectedItem();
+            Remedio novoRemedio = (Remedio) comboRemedio.getSelectedItem();
+            if (novoFarmaceutico == null || novaDoenca == null || novoRemedio == null) {
+                JOptionPane.showMessageDialog(this, "Selecione o Farmacêutico, Doença e Remédio (Novos Dados).", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
-            Paciente pacienteAtualizado = new Paciente(novoNome, novoCpf, novaIdade, novoEndereco, farmaceutico, doenca, remedio);
-            if (pacienteService.salvar(pacienteAtualizado)) {
+            Paciente pacienteAtualizado = new Paciente(
+                    novoNome,
+                    cpfAntigo,
+                    novaIdade,
+                    novoEndereco,
+                    novaAltura,
+                    novoFarmaceutico,
+                    novaDoenca,
+                    novoRemedio
+            );
+
+            if (pacienteService.atualizar(pacienteAtualizado)) {
                 JOptionPane.showMessageDialog(this, "Paciente atualizado com sucesso!");
                 limparCampos();
-                carregarDadosNaTabela();
             } else {
-                JOptionPane.showMessageDialog(this, "Falha ao atualizar o paciente.", "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Paciente com CPF " + cpfAntigo + " não encontrado para atualização.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
         } catch (IOException | ClassNotFoundException e) {
             JOptionPane.showMessageDialog(this, "Falha ao manipular o arquivo de dados.", "Erro de Arquivo", JOptionPane.ERROR_MESSAGE);
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Idade deve ser um número válido.", "Erro de Formato", JOptionPane.ERROR_MESSAGE);
-        } catch (PacienteExisteException e) {
-            throw new RuntimeException(e);
         }
     }
-
-    private void preencherCamposComDadosDaTabela() {
-        int linhaSelecionada = tabelaPacientes.getSelectedRow();
-        if (linhaSelecionada != -1) {
-            campoNome.setText((String) tableModel.getValueAt(linhaSelecionada, 0));
-            campoCpf.setText((String) tableModel.getValueAt(linhaSelecionada, 1));
-            campoIdade.setText(tableModel.getValueAt(linhaSelecionada, 2).toString());
-            campoEndereco.setText((String) tableModel.getValueAt(linhaSelecionada, 3));
-        }
-    }
-
     private void limparCampos() {
         campoNome.setText("");
         campoCpf.setText("");
         campoIdade.setText("");
         campoEndereco.setText("");
+        campoAltura.setText("");
         comboFarmaceutico.setSelectedIndex(-1);
         comboDoenca.setSelectedIndex(-1);
         comboRemedio.setSelectedIndex(-1);
+    }
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            TelaCadastroPaciente tela = new TelaCadastroPaciente();
+            tela.setVisible(true);
+        });
     }
 }

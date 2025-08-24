@@ -3,9 +3,8 @@ package View;
 import Model.DescricaoDoenca;
 import Service.DescricaoDoencaService;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.io.IOException;
-import java.util.Set;
+        import java.awt.*;
+        import java.io.IOException;
 
 public class TelaGerenciarDescricaoDoenca extends JFrame {
 
@@ -15,121 +14,128 @@ public class TelaGerenciarDescricaoDoenca extends JFrame {
     private JButton salvarButton;
     private JButton removerButton;
     private JButton atualizarButton;
-    private JTable tabelaDoencas;
-    private JScrollPane scrollPane;
-    private DefaultTableModel tableModel;
+    private JButton voltarButton;
 
     private DescricaoDoencaService doencaService;
-    private JTextField nomeDoRemédioTextField;
-    private JTextField dosagemRemédioTextField;
-    private JTable table1;
 
     public TelaGerenciarDescricaoDoenca() {
         setTitle("Gerenciar Descrições de Doença");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(800, 600);
+        setSize(400, 300); // Tamanho ajustado
         setLocationRelativeTo(null);
+
+        contentPane = new JPanel(new GridLayout(4, 2, 10, 10));
+        contentPane.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         setContentPane(contentPane);
+
+        campoNome = new JTextField();
+        campoSintomas = new JTextField();
+        salvarButton = new JButton("Salvar");
+        removerButton = new JButton("Remover");
+        atualizarButton = new JButton("Atualizar");
+        voltarButton = new JButton("Voltar para Tela Principal"); // Adicionando o botão Voltar
+
+        contentPane.add(new JLabel("Nome:"));
+        contentPane.add(campoNome);
+        contentPane.add(new JLabel("Sintomas:"));
+        contentPane.add(campoSintomas);
+        contentPane.add(salvarButton);
+        contentPane.add(removerButton);
+        contentPane.add(atualizarButton);
+        contentPane.add(voltarButton);
 
         try {
             doencaService = new DescricaoDoencaService();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Falha ao conectar com o arquivo de dados das doenças.", "Erro de Conexão", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Falha ao conectar com o arquivo de dados das doenças.",
+                    "Erro de Conexão",
+                    JOptionPane.ERROR_MESSAGE);
         }
-
-        String[] colunas = {"Nome", "Sintomas"};
-        tableModel = new DefaultTableModel(colunas, 0);
-        tabelaDoencas.setModel(tableModel);
 
         salvarButton.addActionListener(e -> salvarDoenca());
         removerButton.addActionListener(e -> removerDoenca());
         atualizarButton.addActionListener(e -> atualizarDoenca());
 
-        carregarDadosNaTabela();
-    }
-
-    private void carregarDadosNaTabela() {
-        tableModel.setRowCount(0);
-        try {
-            Set<DescricaoDoenca> doencas = doencaService.getAll();
-            for (DescricaoDoenca d : doencas) {
-                Object[] rowData = {d.getNome(), d.getSintomas()};
-                tableModel.addRow(rowData);
-            }
-        } catch (IOException | ClassNotFoundException e) {
-            JOptionPane.showMessageDialog(this, "Falha ao carregar os dados. Verifique os arquivos.", "Erro de Carregamento", JOptionPane.ERROR_MESSAGE);
-        }
+        voltarButton.addActionListener(e -> {
+            this.dispose();
+            TelaPrincipal telaPrincipal = new TelaPrincipal();
+            telaPrincipal.setVisible(true);
+        });
     }
 
     private void salvarDoenca() {
         try {
             String nome = campoNome.getText();
             String sintomas = campoSintomas.getText();
-
-            if (nome.isEmpty() || sintomas.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Todos os campos devem ser preenchidos.", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
             DescricaoDoenca novaDoenca = new DescricaoDoenca(nome, sintomas);
+
             if (doencaService.salvar(novaDoenca)) {
-                JOptionPane.showMessageDialog(this, "Doença salva com sucesso!");
+                JOptionPane.showMessageDialog(this, "Descrição de Doença salva com sucesso!");
                 limparCampos();
-                carregarDadosNaTabela();
-            } else {
-                JOptionPane.showMessageDialog(this, "A doença já existe.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
+
         } catch (IOException | ClassNotFoundException e) {
-            JOptionPane.showMessageDialog(this, "Falha ao manipular o arquivo de dados.", "Erro de Arquivo", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Falha ao manipular o arquivo de dados.",
+                    "Erro de Arquivo",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
-
     private void removerDoenca() {
-        int linhaSelecionada = tabelaDoencas.getSelectedRow();
-        if (linhaSelecionada == -1) {
-            JOptionPane.showMessageDialog(this, "Selecione uma doença para remover.", "Erro", JOptionPane.ERROR_MESSAGE);
+        String nome = campoNome.getText();
+        String sintomas = campoSintomas.getText();
+
+        if (nome.isEmpty() || sintomas.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Preencha o Nome e os Sintomas para remover a descrição da doença.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         try {
-            String nome = (String) tableModel.getValueAt(linhaSelecionada, 0);
-            String sintomas = (String) tableModel.getValueAt(linhaSelecionada, 1);
             DescricaoDoenca doencaParaRemover = new DescricaoDoenca(nome, sintomas);
 
             if (doencaService.remover(doencaParaRemover)) {
-                JOptionPane.showMessageDialog(this, "Doença removida com sucesso!");
-                carregarDadosNaTabela();
+                JOptionPane.showMessageDialog(this, "Descrição de Doença removida com sucesso!");
+                limparCampos();
             } else {
-                JOptionPane.showMessageDialog(this, "Falha ao remover a doença.", "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Descrição de Doença não encontrada.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
         } catch (IOException | ClassNotFoundException e) {
-            JOptionPane.showMessageDialog(this, "Falha ao manipular o arquivo de dados.", "Erro de Arquivo", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this,
+                    "Falha ao manipular o arquivo de dados.",
+                    "Erro de Arquivo",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void atualizarDoenca() {
-        int linhaSelecionada = tabelaDoencas.getSelectedRow();
-        if (linhaSelecionada == -1) {
-            JOptionPane.showMessageDialog(this, "Selecione uma doença para atualizar.", "Erro", JOptionPane.ERROR_MESSAGE);
+        String nomeParaAtualizar = JOptionPane.showInputDialog(this, "Digite o NOME da doença que deseja atualizar:");
+        if (nomeParaAtualizar == null || nomeParaAtualizar.trim().isEmpty()) {
+            return;
+        }
+        String novoNome = campoNome.getText();
+        String novosSintomas = campoSintomas.getText();
+
+        if (novoNome.isEmpty() || novosSintomas.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Preencha o Nome e os Sintomas com os NOVOS dados.", "Aviso", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         try {
-            String nomeAntigo = (String) tableModel.getValueAt(linhaSelecionada, 0);
-            String sintomasAntigo = (String) tableModel.getValueAt(linhaSelecionada, 1);
-            DescricaoDoenca doencaAntiga = new DescricaoDoenca(nomeAntigo, sintomasAntigo);
+            DescricaoDoenca doencaAntiga = new DescricaoDoenca(nomeParaAtualizar, "");
 
-            String novoNome = campoNome.getText();
-            String novosSintomas = campoSintomas.getText();
             DescricaoDoenca doencaAtualizada = new DescricaoDoenca(novoNome, novosSintomas);
-
-            if (doencaService.remover(doencaAntiga) && doencaService.salvar(doencaAtualizada)) {
-                JOptionPane.showMessageDialog(this, "Doença atualizada com sucesso!");
-                limparCampos();
-                carregarDadosNaTabela();
+            if (doencaService.remover(doencaAntiga)) {
+                if (doencaService.salvar(doencaAtualizada)) {
+                    JOptionPane.showMessageDialog(this, "Descrição de Doença atualizada com sucesso!");
+                    limparCampos();
+                } else {
+                    JOptionPane.showMessageDialog(this, "Doença antiga removida, mas falha ao salvar a nova. Tente salvar novamente.", "Erro Grave", JOptionPane.ERROR_MESSAGE);
+                }
             } else {
-                JOptionPane.showMessageDialog(this, "Falha ao atualizar a doença.", "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Doença com nome '" + nomeParaAtualizar + "' não encontrada para atualização.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
+
         } catch (IOException | ClassNotFoundException e) {
             JOptionPane.showMessageDialog(this, "Falha ao manipular o arquivo de dados.", "Erro de Arquivo", JOptionPane.ERROR_MESSAGE);
         }
@@ -138,5 +144,12 @@ public class TelaGerenciarDescricaoDoenca extends JFrame {
     private void limparCampos() {
         campoNome.setText("");
         campoSintomas.setText("");
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            TelaGerenciarDescricaoDoenca tela = new TelaGerenciarDescricaoDoenca();
+            tela.setVisible(true);
+        });
     }
 }
